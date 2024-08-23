@@ -2,8 +2,8 @@ test:
 	DB_TEST=True pytest -s
 
 lint: clean
-	isort ./api ./tests
-	pylint ./api ./tests
+	isort ./api ./tests ./bot
+	pylint ./api ./tests ./bot
 
 db_setup:
 	alembic upgrade head
