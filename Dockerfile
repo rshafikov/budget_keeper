@@ -2,25 +2,26 @@ FROM python:3.12 AS python-base
 
 LABEL authors="rshafikov"
 
-WORKDIR /app
 COPY requirements* .
-RUN pip install -U pip && pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.txt
+RUN pip install -U pip && pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/prod/wheels -r requirements.txt
+RUN pip install -U pip && pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/dev/wheels -r requirements_test.txt
 
 
 FROM python:3.12 AS prod
 
 ENV PYTHONUNBUFFERED 1
 
-COPY --from=python-base /usr/src/app/wheels /usr/src/app/wheels
+WORKDIR /app
+COPY --from=python-base /usr/src/app/prod/wheels /usr/src/app/wheels
 RUN pip install --no-cache /usr/src/app/wheels/*
 COPY . .
 
 
-FROM python:3.12 AS test
+FROM python:3.12 AS dev
 
 ENV PYTHONUNBUFFERED 1
 
-COPY --from=python-base /usr/src/app/wheels /usr/src/app/wheels
-RUN pip install -U pip && pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements_test.txt
+WORKDIR /app
+COPY --from=python-base /usr/src/app/dev/wheels /usr/src/app/wheels
 RUN pip install --no-cache /usr/src/app/wheels/*
 COPY . .

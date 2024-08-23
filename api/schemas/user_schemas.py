@@ -5,7 +5,7 @@ from pydantic import BaseModel, ConfigDict
 
 from api.schemas.category_schemas import Category, CategoryBase
 from api.schemas.currency_schemas import Currency
-from api.schemas.record_schemas import Record, RecordExternal
+from api.schemas.record_schemas import Record
 
 
 class Role(enum.Enum):
@@ -27,6 +27,12 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str
+
+
+class UserUpdate(BaseModel):
+    name: str | None = None
+    lastname: str | None = None
+    currency: Currency | None = None
 
 
 class AdminCreate(UserCreate):
@@ -51,5 +57,4 @@ class UserSecure(UserBase):
     model_config = ConfigDict(from_attributes=True)
 
     currency: Currency
-    records: list[RecordExternal | None]
     categories: list[CategoryBase | None]

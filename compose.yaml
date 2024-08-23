@@ -9,6 +9,9 @@ services:
       POSTGRES_USER: "$DB_USER"
       POSTGRES_DB: "$DB_NAME"
       POSTGRES_PORT: "$DB_PORT"
+    # dev-mode only
+    ports:
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -16,7 +19,7 @@ services:
     container_name: "bot-setup"
     build:
       context: .
-      target: test
+      target: dev
       dockerfile: Dockerfile
     env_file:
       - .env
@@ -28,15 +31,18 @@ services:
     container_name: "bot-api"
     build:
       context: .
-      target: prod
+      target: dev
       dockerfile: Dockerfile
     depends_on:
       - migrate_and_tests
     env_file:
        - .env
+    # dev-mode only
+#    volumes:
+#      - "./:/app"
     ports:
        - "8000:8000"
-    command: ["fastapi", "run", "api/main.py", "--port", "8000"]
+    command: ["fastapi", "dev", "api/main.py", "--port", "8000", "--host", "0.0.0.0"]
 
 volumes:
   postgres_data:

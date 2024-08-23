@@ -66,3 +66,17 @@ class TestUsers:
         assert response.status_code == status.HTTP_200_OK
         assert isinstance(response.json(), list)
         assert len(response.json()) >= 1
+
+    @pytest.mark.asyncio
+    async def test_update_user(self, auth_client, default_user):
+        new_user_data = {
+            'name': 'a_new_name',
+            'lastname': 'a_new_lastname',
+            'currency': 'EUR'
+        }
+        response = await auth_client.put('/users/me', json=new_user_data)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.json()['currency'] == new_user_data['currency']
+        assert response.json()['name'] == new_user_data['name']
+        assert response.json()['lastname'] == new_user_data['lastname']

@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from api.routers.auth import rbac
-from api.schemas.user_schemas import Role, UserBase, UserCreate, UserSecure
+from api.schemas.user_schemas import (Role, UserBase, UserCreate, UserSecure,
+                                      UserUpdate)
 from api.utils.dependencies import CurrentUserDeps, UserServiceDeps
 
 user_router = APIRouter(
@@ -40,3 +41,15 @@ async def get_user(tg_id: str, user_service: UserServiceDeps) -> UserBase:
 @user_router.get("/me", response_model=UserSecure)
 async def user_profile(user: CurrentUserDeps):
     return user
+
+
+@user_router.put("/me", response_model=UserSecure)
+async def update_user(
+        user: CurrentUserDeps,
+        user_service: UserServiceDeps,
+        new_user_data: UserUpdate
+):
+    return await user_service.update_instance(
+        instance_id=user.id,
+        data=new_user_data.model_dump(exclude_unset=True)
+    )

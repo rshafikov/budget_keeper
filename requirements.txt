@@ -1,3 +1,4 @@
+# api deps
 sqlalchemy[asyncio]
 alembic
 asyncpg
@@ -12,3 +13,9 @@ passlib[bcrypt]
 pyjwt
 python-multipart
 alembic-postgresql-enum
+# bot deps
+aiogram
+python-decouple
+prettytable
+redis
+openpyxl

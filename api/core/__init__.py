@@ -10,7 +10,8 @@ PWD = Path(__file__).resolve().parent.parent.parent
 class Settings(BaseSettings, env_ignore_empty=True):
     model_config = SettingsConfigDict(
         env_file=PWD / '.env',
-        env_file_encoding="utf-8"
+        env_file_encoding="utf-8",
+        extra='allow'
     )
 
     DB_HOST: str = "localhost"
