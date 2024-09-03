@@ -38,6 +38,13 @@ class TestCategories:
         assert response.json() == categories
 
     @pytest.mark.asyncio
+    async def test_get_category(self, auth_client, default_category):
+        response = await auth_client.get(f'/categories/{default_category.name}')
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.json()['name'] == default_category.name
+
+    @pytest.mark.asyncio
     async def test_categories_protected(self, client):
         get_response = await client.get('/categories/')
         post_response = await client.post(

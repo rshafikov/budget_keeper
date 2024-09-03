@@ -1,7 +1,7 @@
 services:
   db:
     container_name: "bot-db"
-    image: postgres:latest
+    image: postgres:16.2
     env_file:
       - .env
     environment:
@@ -37,11 +37,11 @@ services:
       - migrate_and_tests
     env_file:
        - .env
-    # dev-mode only
-#    volumes:
-#      - "./:/app"
+  # dev-mode only
+    volumes:
+       - "./:/app"
     ports:
-       - "8000:8000"
+       - "127.0.0.1:8000:8000"
     command: ["fastapi", "dev", "api/main.py", "--port", "8000", "--host", "0.0.0.0"]
 
 volumes:

@@ -19,6 +19,15 @@ async def get_user_categories(
     return await category_service.get_instances(user_id=user.id, hidden=hidden)
 
 
+@category_router.get("/{category_name}")
+async def get_category_by_name(
+        category_name: str,
+        category_service: CategoryServiceDeps,
+        hidden: Annotated[bool | None, Query()] = False,
+) -> CategoryBase:
+    return await category_service.get_instance_or_404(name=category_name, hidden=hidden)
+
+
 @category_router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_category_for_user(
         current_user: CurrentUserDeps,

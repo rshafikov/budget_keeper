@@ -14,10 +14,10 @@ record_router = APIRouter(prefix="/records", tags=["records"])
 
 @record_router.get("/")
 async def get_records(
-    user: CurrentUserDeps,
-    record_service: RecordServiceDeps,
-    _from: Annotated[date | None, Query(alias='from')] = None,
-    _to: Annotated[date | None, Query(alias='to')] = None
+        user: CurrentUserDeps,
+        record_service: RecordServiceDeps,
+        _from: Annotated[date | None, Query(alias='from')] = None,
+        _to: Annotated[date | None, Query(alias='to')] = None
 ) -> List[RecordExternal]:
     return await record_service.filter(_from, _to, user_id=user.id)
 

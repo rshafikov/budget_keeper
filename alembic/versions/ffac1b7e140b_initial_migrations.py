@@ -57,7 +57,7 @@ def upgrade() -> None:
     )
     op.create_table('records',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('amount', sa.Integer(), nullable=False),
+    sa.Column('amount', sa.Float(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('category_id', sa.Integer(), nullable=False),
     sa.Column('currency', postgresql.ENUM('RUB', 'USD', 'EUR', name='currency', create_type=False), nullable=False),

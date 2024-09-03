@@ -6,17 +6,21 @@ from aiogram.types import CallbackQuery, Message
 from redis import Redis
 
 from bot.client import APIClient
-from bot.keyboards.bot_utils import del_call_kb
+from bot.keyboards.helpers import del_call_kb
 from bot.keyboards.inline.currency import choose_currency
 from bot.keyboards.main_menu import main_kb
-from bot.middleware import AuthMiddleware
 
 start_router = Router()
-start_router.message.middleware(AuthMiddleware())
 
 
 class CurrencyState(StatesGroup):
     currency = State()
+
+
+@start_router.message(F.text.lower() == 'меню')
+async def main_menu(message: Message, state: FSMContext):
+    await state.clear()
+    await message.answer('Выберите действие:', reply_markup=main_kb(one_time=True))
 
 
 @start_router.message(Command(commands=('start', )))
@@ -28,7 +32,7 @@ async def handle_start(message: Message, state: FSMContext):
     await state.set_state(CurrencyState.currency)
 
 
-@start_router.callback_query(F.data, CurrencyState.currency)
+@start_router.callback_query(CurrencyState.currency)
 async def handle_currency(
         call: CallbackQuery,
         state: FSMContext,
@@ -39,7 +43,7 @@ async def handle_currency(
     await del_call_kb(call)
 
     if (token := token_storage.get(str(call.from_user.id))) is None:
-        await call.answer('Telegram API error. Пожалуйста, попробуйте еще раз.')
+        await call.answer('Ваша предыдущая сессия истекла. Пожалуйста, попробуйте еще раз.')
         return
 
     await call.answer('Уведомляем Павла Дурова...')

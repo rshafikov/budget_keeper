@@ -45,7 +45,7 @@ class UserModel(BaseModel):
 class RecordModel(BaseModel):
     __tablename__ = "records"
 
-    amount: Mapped[int]
+    amount: Mapped[float]
 
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     user: Mapped["UserModel"] = relationship(
