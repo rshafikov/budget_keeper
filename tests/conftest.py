@@ -109,11 +109,7 @@ async def default_currency(db_manager: TestDBManager):
 @pytest.fixture()
 async def default_category(db_manager: TestDBManager, default_user: User) -> Category:
     new_category = await db_manager.category.create_instance(
-        CategoryCreate(
-            name='test_category',
-            symbol='test_category_symbol',
-            user_id=default_user.id
-        )
+        CategoryCreate(name='test_category', user_id=default_user.id)
     )
     yield new_category
 

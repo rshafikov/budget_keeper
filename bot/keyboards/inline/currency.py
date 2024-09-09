@@ -8,6 +8,7 @@ def choose_currency():
                 InlineKeyboardButton(text="RUB", callback_data='RUB'),
                 InlineKeyboardButton(text="EUR", callback_data='EUR'),
                 InlineKeyboardButton(text="USD", callback_data='USD'),
+                InlineKeyboardButton(text="RSD", callback_data='RSD'),
             ]
         ]
     )

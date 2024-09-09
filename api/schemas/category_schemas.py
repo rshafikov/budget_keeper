@@ -5,7 +5,7 @@ from pydantic import BaseModel, ConfigDict
 
 class CategoryBase(BaseModel):
     name: str
-    symbol: str | None = None
+    # symbol: str | None = None
 
 
 class CategoryCreate(CategoryBase):
@@ -19,3 +19,6 @@ class Category(CategoryBase):
     created_at: datetime
     updated_at: datetime
     hidden: bool
+
+class CategorySecure(CategoryBase):
+    hidden: bool | None = False

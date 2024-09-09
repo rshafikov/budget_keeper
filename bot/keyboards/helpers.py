@@ -34,7 +34,7 @@ def cancel_kb(callback_data: str):
     return InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text='cancel / отмена', callback_data=callback_data),
+                InlineKeyboardButton(text='отменить', callback_data=callback_data),
             ]
         ]
     )

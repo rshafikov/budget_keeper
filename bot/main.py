@@ -43,7 +43,7 @@ bot = Bot(
     token=config('BOT_TOKEN'),
     default=DefaultBotProperties(parse_mode=ParseMode.HTML),
 )
-dp = Dispatcher(storage=state_storage, bot=bot, token_storage=token_storage, category_storage={})
+dp = Dispatcher(storage=state_storage, bot=bot, token_storage=token_storage, user_storage={})
 
 
 @dp.error(ExceptionTypeFilter(ClientError), F.update.message.as_("message"))

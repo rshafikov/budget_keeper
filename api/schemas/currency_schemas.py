@@ -8,6 +8,7 @@ class Currency(str, enum.Enum):
     RUB = 'RUB'
     USD = 'USD'
     EUR = 'EUR'
+    RSD = 'RSD'
 
 
 class CurrencyBase(BaseModel):

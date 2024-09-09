@@ -6,6 +6,7 @@ from decouple import config
 from bot.client import APIClient
 from bot.handlers.categories import category_router
 from bot.handlers.records import record_router
+from bot.handlers.reports import report_router
 from bot.handlers.tear_down import tear_down_router
 from bot.main import bot, dp
 from bot.handlers.start import start_router
@@ -21,6 +22,7 @@ async def main():
         dp.include_router(start_router)
         dp.include_router(category_router)
         dp.include_router(record_router)
+        dp.include_router(report_router)
         dp.include_router(tear_down_router)
 
         await bot.delete_webhook(drop_pending_updates=True)

@@ -45,11 +45,7 @@ async def create_category_for_user(
 
     try:
         return await manager.create_instance(
-            instance=CategoryCreate(
-                user_id=current_user.id,
-                name=category.name,
-                symbol=category.symbol
-            )
+            instance=CategoryCreate(user_id=current_user.id, name=category.name)
         )
     except IntegrityError:
         raise HTTPException(

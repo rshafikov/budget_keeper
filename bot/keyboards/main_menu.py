@@ -4,12 +4,9 @@ from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 def main_kb(one_time: bool = False):
     kb = [
         [
-            KeyboardButton(text='Записать расход')
-        ],
-        [
+            KeyboardButton(text='Записать расход'),
             KeyboardButton(text='Категории'),
-            KeyboardButton(text='Отчеты'),
-            KeyboardButton(text='Настройки')
+            KeyboardButton(text='Отчеты')
         ],
     ]
     return ReplyKeyboardMarkup(

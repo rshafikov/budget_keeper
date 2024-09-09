@@ -11,17 +11,11 @@ from api.schemas.category_schemas import CategoryCreate
 )
 class TestCategories:
     @pytest.mark.asyncio
-    async def test_create_category(
-            self, auth_client, default_user, db_manager
-    ):
-        new_category = {'name': 'test_category', 'symbol': '✅'}
-        categories_before = await db_manager.category.count_instances(
-            user_id=default_user.id
-        )
+    async def test_create_category(self, auth_client, default_user, db_manager):
+        new_category = {'name': 'test_category'}
+        categories_before = await db_manager.category.count_instances(user_id=default_user.id)
         response = await auth_client.post('/categories/', json=new_category)
-        categories_after = await db_manager.category.count_instances(
-            user_id=default_user.id
-        )
+        categories_after = await db_manager.category.count_instances(user_id=default_user.id)
 
         assert categories_after == categories_before + 1
         assert response.status_code == status.HTTP_201_CREATED
@@ -29,8 +23,7 @@ class TestCategories:
 
     @pytest.mark.asyncio
     async def test_get_categories(self, auth_client, default_user, db_manager):
-        categories = await db_manager.category.get_instances(
-            user_id=default_user.id)
+        categories = await db_manager.category.get_instances(user_id=default_user.id)
         response = await auth_client.get('/categories/')
 
         assert response.status_code == status.HTTP_200_OK
@@ -47,32 +40,18 @@ class TestCategories:
     @pytest.mark.asyncio
     async def test_categories_protected(self, client):
         get_response = await client.get('/categories/')
-        post_response = await client.post(
-            '/categories/',
-            json={'name': 'test_category', 'symbol': '✅'}
-        )
+        post_response = await client.post('/categories/', json={'name': 'test_category'})
 
         assert get_response.status_code == status.HTTP_401_UNAUTHORIZED
         assert post_response.status_code == status.HTTP_401_UNAUTHORIZED
 
     @pytest.mark.asyncio
-    async def test_create_same_category(
-            self, auth_client, default_user, db_manager
-    ):
-        new_category = {
-            'name': 'test_category',
-            'symbol': '✅',
-            'user_id': default_user.id
-        }
-        category = await db_manager.category.create_instance(
-            CategoryCreate(**new_category))
-        categories_before = await db_manager.category.count_instances(
-            user_id=default_user.id
-        )
+    async def test_create_same_category(self, auth_client, default_user, db_manager):
+        new_category = {'name': 'test_category', 'user_id': default_user.id}
+        category = await db_manager.category.create_instance(CategoryCreate(**new_category))
+        categories_before = await db_manager.category.count_instances(user_id=default_user.id)
         response = await auth_client.post('/categories/', json=new_category)
-        categories_after = await db_manager.category.count_instances(
-            user_id=default_user.id
-        )
+        categories_after = await db_manager.category.count_instances(user_id=default_user.id)
 
         assert response.status_code == status.HTTP_409_CONFLICT
         assert categories_after == categories_before
@@ -108,14 +87,12 @@ class TestCategories:
     async def test_update_category(
             self, auth_client, default_category, default_record, db_manager
     ):
-        category_changes = {'name': 'category_updated_name', 'symbol': '😃'}
-        response = await auth_client.put(
-            f'/categories/{default_category.name}', json=category_changes)
+        changes = {'name': 'category_updated_name'}
+        response = await auth_client.put(f'/categories/{default_category.name}', json=changes)
         category = await db_manager.category.get_instance(id=default_category.id)
 
         assert response.status_code == status.HTTP_200_OK
-        assert category.name == category_changes['name']
-        assert category.symbol == category_changes['symbol']
+        assert category.name == changes['name']
 
     @pytest.mark.asyncio
     async def test_create_category_if_it_hidden(
@@ -123,12 +100,7 @@ class TestCategories:
     ):
         await auth_client.delete(f'/categories/{default_category.name}')
         category_before_recreate = await db_manager.category.get_instance(id=default_category.id)
-        response = await auth_client.post(
-            '/categories/', json={
-                'name': default_category.name,
-                'symbol': 'new_symbol - 😀'
-            }
-        )
+        response = await auth_client.post('/categories/', json={'name': default_category.name})
         category_after = await db_manager.category.get_instance(id=default_category.id)
 
         assert response.status_code == status.HTTP_201_CREATED

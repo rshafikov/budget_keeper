@@ -21,7 +21,7 @@ class AuthMiddleware(BaseMiddleware):
 
             client: APIClient = data['api_client']
             token_storage: redis.Redis = data['token_storage']
-            category_storage: dict = data['category_storage']
+            user_storage: dict = data['user_storage']
 
             if (token := token_storage.get(f'{event.chat.id}')) is None:
                 token = await client.get_token(event.chat.id)
@@ -36,10 +36,10 @@ class AuthMiddleware(BaseMiddleware):
 
                 token_storage.set(f'{event.chat.id}', token, ex=600_000)
 
-            if (user_categories := category_storage.get(event.from_user.id)) is None:
-                user_categories = await client.get_categories(token)
-                category_storage.update({event.from_user.id: user_categories})
+            if (user := user_storage.get(event.from_user.id)) is None:
+                user = await client.user_profile(token)
+                user_storage.update({event.from_user.id: user})
 
             data['user_token'] = token
-            data['user_categories'] = user_categories
+            data['user'] = user
             return await handler(event, data)

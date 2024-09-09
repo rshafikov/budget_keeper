@@ -25,11 +25,11 @@ class BaseService:
         async with self.uow:
             manager = getattr(self.uow, self.manager_name)
             instance = await manager.get_one(**kwargs)
+
             if raw_model:
                 return instance
 
-            return self.default_result_schema.model_validate(
-                instance) if instance else None
+            return self.default_result_schema.model_validate(instance) if instance else None
 
     async def get_instances(self, **kwargs) -> list[Any]:
         async with self.uow:

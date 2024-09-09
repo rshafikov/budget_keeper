@@ -38,6 +38,7 @@ async def handle_currency(
         state: FSMContext,
         api_client: APIClient,
         token_storage: Redis | dict,
+        user_storage: dict
 ):
     await state.clear()
     await del_call_kb(call)
@@ -50,8 +51,9 @@ async def handle_currency(
     user_upd = await api_client.update_user(token, currency=str(call.data))
     await call.message.answer(
         text=(
-            f'Установлена базовая валюта: <b>{user_upd.currency.value!r}</b>.'
+            f'Установлена базовая валюта: <b>{user_upd['currency']!r}</b>.'
             f'\nВы всегда можете изменить валюту в настройках'
         ),
         reply_markup=main_kb()
     )
+    user_storage[call.from_user.id] = user_upd

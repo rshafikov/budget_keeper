@@ -4,7 +4,7 @@ alembic
 asyncpg
 fastapi
 fastapi-cli
-pydantic
+pydantic<2.9.0
 python-dotenv
 uvicorn
 pydantic_settings

@@ -3,7 +3,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict
 
-from api.schemas.category_schemas import Category, CategoryBase
+from api.schemas.category_schemas import Category, CategorySecure
 from api.schemas.currency_schemas import Currency
 from api.schemas.record_schemas import Record
 
@@ -57,4 +57,4 @@ class UserSecure(UserBase):
     model_config = ConfigDict(from_attributes=True)
 
     currency: Currency
-    categories: list[CategoryBase | None]
+    categories: list[CategorySecure | None]

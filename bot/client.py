@@ -87,7 +87,9 @@ class APIClient:
     async def user_profile(self, token: str | bytes) -> dict:
         headers = self._get_headers(token)
         async with self.session.get("/api/v1/users/me", headers=headers) as r:
-            return await r.json()
+            user = await r.json()
+            user['categories'] = [c['name'] for c in user['categories'] if not c['hidden']]
+            return user
 
     @log_http_requests
     async def update_user(
@@ -101,8 +103,11 @@ class APIClient:
         payload = user_upd.model_dump(exclude_none=True)
         headers = self._get_headers(token)
         async with self.session.put("/api/v1/users/me", headers=headers, json=payload) as r:
-            upd = await r.json()
-            return UserSecure.model_validate(upd)
+            updated_user = await r.json()
+            updated_user['categories'] = [
+                c['name'] for c in updated_user['categories'] if not c['hidden']
+            ]
+            return updated_user
 
     @log_http_requests
     async def get_categories(
@@ -181,7 +186,14 @@ class APIClient:
             from_date: str | None = None,
             to_date: str | None = None
     ):
-        params = {'from': from_date, 'to': to_date}
+        params = {}
+
+        if from_date:
+            params['from'] = from_date
+
+        if to_date:
+            params['to'] = to_date
+
         headers = self._get_headers(token)
         async with self.session.get("/api/v1/records/", headers=headers, params=params) as r:
             return await r.json()
