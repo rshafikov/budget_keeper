@@ -1,0 +1,120 @@
+name: my_budget
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    env:
+      DB_TEST: True
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12.3
+      - name: Dependencies and tests
+        run: |
+          python -m pip install --no-cache-dir --upgrade pip && pip install -r requirements_test.txt
+          make lint
+          make test
+
+
+  get_all_modified_files_and_send_messages:
+    runs-on: ubuntu-latest
+    needs: tests
+    name: Test changed-files
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v35
+        with:
+          since_last_remote_commit: true
+      - name: List all changed files
+        run: |
+          for f in ${{ steps.changed-files.outputs.all_modified_files }}; do
+            echo "$f was created/modified/deleted"
+          done
+      - name: Notify me
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.MY_TG_ID }}
+          token: ${{ secrets.BOT_TOKEN }}
+          format: html
+          message: |
+            <pre>
+            ${{ github.workflow }} created by ${{ github.actor }}.
+            
+            Commit message:
+            ${{ github.event.head_commit.message }}
+            
+            Added files:
+            ${{ steps.changed-files.outputs.added_files }}
+            
+            Modified files:
+            ${{ steps.changed-files.outputs.modified_files }}
+            
+            Deleted files:
+            ${{ steps.changed-files.outputs.deleted_files }}
+            </pre>
+
+
+  build_and_push_to_docker_hub_main_image:
+    name: Push Docker image to Docker Hub
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    needs: tests
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/arm64
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/budget_bot:latest
+          target: prod
+
+
+  build_and_push_to_docker_hub_infra_image:
+    name: Push Docker image to Docker Hub
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    needs: tests
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/arm64
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/budget_bot_infra:latest
+          target: infra

@@ -1,0 +1,14 @@
+[project]
+name = "budget_keeper_bot"
+dynamic = ["version"]
+
+requires-python = ">=3.12"
+authors = {name = "Ramil Shafikov", email = "shirawycc@yandex.ru"}
+
+description = "Telegram Bot to handle your expences"
+readme = "README.md"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+filterwarnings = "ignore::DeprecationWarning"
+asyncio_default_fixture_loop_scope = "function"
