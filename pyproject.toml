@@ -12,3 +12,10 @@ readme = "README.md"
 asyncio_mode = "auto"
 filterwarnings = "ignore::DeprecationWarning"
 asyncio_default_fixture_loop_scope = "function"
+
+[tool.pylint.format]
+max-line-length = 100
+
+[tool.pylint."MESSAGES CONTROL"]
+disable = "C0111,W0707,R0903,E1136,E1102,W0613,W0621,W0718,R0801"
+max-args = 7

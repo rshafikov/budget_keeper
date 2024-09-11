@@ -87,7 +87,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          platforms: linux/arm64
+          platforms: linux/arm64, linux/amd64
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/budget_bot:latest
           target: prod
@@ -114,7 +114,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          platforms: linux/arm64
+          platforms: linux/arm64, linux/amd64
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/budget_bot_infra:latest
           target: infra
