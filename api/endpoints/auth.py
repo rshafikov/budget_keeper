@@ -11,7 +11,7 @@ from api.schemas.auth import Token
 from api.schemas.user_schemas import Role, User
 from api.services.user_service import UserService, get_user_service
 
-auth_router = APIRouter(prefix="/auth", tags=["auth"])
+auth_router = APIRouter()
 
 token_security = OAuth2PasswordBearer(tokenUrl="/auth/token")
 

@@ -20,5 +20,6 @@ class Category(CategoryBase):
     updated_at: datetime
     hidden: bool
 
+
 class CategorySecure(CategoryBase):
     hidden: bool | None = False

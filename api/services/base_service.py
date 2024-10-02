@@ -35,8 +35,7 @@ class BaseService:
         async with self.uow:
             manager = getattr(self.uow, self.manager_name)
             instances: list = await manager.get_all(**kwargs)
-            return [self.default_result_schema.model_validate(i)
-                    for i in instances]
+            return [self.default_result_schema.model_validate(i) for i in instances]
 
     async def count_instances(self, **kwargs) -> int:
         async with self.uow:

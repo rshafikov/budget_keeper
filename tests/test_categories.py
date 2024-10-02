@@ -2,7 +2,6 @@ import pytest
 from fastapi import status
 
 from api.core import settings
-from api.schemas.category_schemas import CategoryCreate
 
 
 @pytest.mark.skipif(
@@ -12,7 +11,7 @@ from api.schemas.category_schemas import CategoryCreate
 class TestCategories:
     @pytest.mark.asyncio
     async def test_create_category(self, auth_client, default_user, db_manager):
-        new_category = {'name': 'test_category'}
+        new_category = {'name': 'new_category'}
         categories_before = await db_manager.category.count_instances(user_id=default_user.id)
         response = await auth_client.post('/categories/', json=new_category)
         categories_after = await db_manager.category.count_instances(user_id=default_user.id)
@@ -22,13 +21,13 @@ class TestCategories:
         assert response.json() == new_category
 
     @pytest.mark.asyncio
-    async def test_get_categories(self, auth_client, default_user, db_manager):
+    async def test_get_categories(self, auth_client, default_user, default_category, db_manager):
         categories = await db_manager.category.get_instances(user_id=default_user.id)
         response = await auth_client.get('/categories/')
 
         assert response.status_code == status.HTTP_200_OK
         assert isinstance(response.json(), list)
-        assert response.json() == categories
+        assert response.json() == [{'name': c.name} for c in categories]
 
     @pytest.mark.asyncio
     async def test_get_category(self, auth_client, default_category):
@@ -46,9 +45,10 @@ class TestCategories:
         assert post_response.status_code == status.HTTP_401_UNAUTHORIZED
 
     @pytest.mark.asyncio
-    async def test_create_same_category(self, auth_client, default_user, db_manager):
-        new_category = {'name': 'test_category', 'user_id': default_user.id}
-        category = await db_manager.category.create_instance(CategoryCreate(**new_category))
+    async def test_create_same_category(
+            self, auth_client, default_user, default_category, db_manager
+    ):
+        new_category = {'name': default_category.name, 'user_id': default_user.id}
         categories_before = await db_manager.category.count_instances(user_id=default_user.id)
         response = await auth_client.post('/categories/', json=new_category)
         categories_after = await db_manager.category.count_instances(user_id=default_user.id)
@@ -56,16 +56,29 @@ class TestCategories:
         assert response.status_code == status.HTTP_409_CONFLICT
         assert categories_after == categories_before
         assert response.json()['detail'] == (
-            f'Category with name {category.name!r} already exists.')
+            f'Category with name {default_category.name!r} already exists.')
 
     @pytest.mark.asyncio
-    async def test_delete_empty_category(self, auth_client, default_category, db_manager):
+    async def test_delete_empty_category(
+            self, auth_client, default_user, random_category, db_manager
+    ):
         categories_before = await db_manager.category.count_instances()
-        response = await auth_client.delete(f'/categories/{default_category.name}')
+        response = await auth_client.delete(f'/categories/{random_category.name}')
         categories_after = await db_manager.category.count_instances()
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert categories_before == categories_after + 1
+
+    @pytest.mark.asyncio
+    async def test_update_category(
+            self, auth_client, random_category, default_record, db_manager
+    ):
+        changes = {'name': 'random_category_updated_name'}
+        response = await auth_client.put(f'/categories/{random_category.name}', json=changes)
+        category = await db_manager.category.get_instance(id=random_category.id)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert category.name == changes['name']
 
     @pytest.mark.asyncio
     async def test_delete_category_with_record(
@@ -82,17 +95,6 @@ class TestCategories:
         assert categories_before == categories_after + 1
         assert hidden_category is not None
         assert hidden_category.hidden
-
-    @pytest.mark.asyncio
-    async def test_update_category(
-            self, auth_client, default_category, default_record, db_manager
-    ):
-        changes = {'name': 'category_updated_name'}
-        response = await auth_client.put(f'/categories/{default_category.name}', json=changes)
-        category = await db_manager.category.get_instance(id=default_category.id)
-
-        assert response.status_code == status.HTTP_200_OK
-        assert category.name == changes['name']
 
     @pytest.mark.asyncio
     async def test_create_category_if_it_hidden(

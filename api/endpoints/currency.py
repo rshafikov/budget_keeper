@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from api.routers.auth import rbac
+from api.endpoints.auth import rbac
 from api.schemas.currency_schemas import CurrencyBase
 from api.schemas.user_schemas import Role
 from api.services.currency_service import CurrencyService, get_currency_service
 
-currency_router = APIRouter(prefix="/currency", tags=["currency"])
+currency_router = APIRouter()
 
 
 @currency_router.post(

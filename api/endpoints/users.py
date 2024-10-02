@@ -1,14 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from api.routers.auth import rbac
+from api.endpoints.auth import rbac
 from api.schemas.user_schemas import (Role, UserBase, UserCreate, UserSecure,
                                       UserUpdate)
 from api.utils.dependencies import CurrentUserDeps, UserServiceDeps
 
-user_router = APIRouter(
-    prefix="/users",
-    tags=["users"]
-)
+user_router = APIRouter()
 
 
 @user_router.post("/", status_code=status.HTTP_201_CREATED)

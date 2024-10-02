@@ -9,7 +9,7 @@ from api.schemas.record_schemas import (RecordCreate, RecordExternal,
 from api.utils.dependencies import (CategoryServiceDeps, CurrentUserDeps,
                                     RecordServiceDeps)
 
-record_router = APIRouter(prefix="/records", tags=["records"])
+record_router = APIRouter()
 
 
 @record_router.get("/")

@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import Depends
 
-from api.routers.auth import get_auth_user
+from api.endpoints.auth import get_auth_user
 from api.schemas.user_schemas import User
 from api.services.category_service import CategoryService, get_category_service
 from api.services.record_service import RecordService, get_record_service

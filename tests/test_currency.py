@@ -37,7 +37,7 @@ class TestCurrency:
         get_response = await client.get(f'/currency/{default_currency.name}/')
         post_response = await client.post(
             '/currency/',
-            json={'name': 'test_currency', 'symbol': '✅'}
+            json={'name': 'new_currency', 'symbol': '✅'}
         )
 
         assert get_response.status_code == status.HTTP_401_UNAUTHORIZED
