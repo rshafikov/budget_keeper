@@ -59,18 +59,24 @@ def create_report_table(records: list, main_currency: str, **kwargs) -> PrettyTa
         amount_per_category[category_name] += amount
         total_sum += amount
 
+    sorted_results = sorted(
+        amount_per_category.items(),
+        key=lambda x: x[1],
+        reverse=True
+    )
+
     table = PrettyTable(
         hrules=ALL,
         vrules=ALL,
         align='l',
         valign='m',
         max_width=21,
-        max_table_width=31,
+        max_table_width=33,
         field_names=('CATEGORY', main_currency, '%'),
         **kwargs
     )
 
-    for category, amount in amount_per_category.items():
+    for category, amount in sorted_results:
         percentage = (amount / total_sum) * 100 if total_sum else 0
         table.add_row([category, f'{amount:.1f}', f'{percentage:.0f}'])
 

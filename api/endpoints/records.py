@@ -1,5 +1,5 @@
 from datetime import date
-from typing import Annotated, List
+from typing import Annotated
 
 from fastapi import APIRouter, Query, status
 
@@ -18,7 +18,7 @@ async def get_records(
         record_service: RecordServiceDeps,
         _from: Annotated[date | None, Query(alias='from')] = None,
         _to: Annotated[date | None, Query(alias='to')] = None
-) -> List[RecordExternal]:
+) -> list[RecordExternal]:
     return await record_service.filter(_from, _to, user_id=user.id)
 
 

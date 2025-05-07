@@ -9,7 +9,7 @@ services:
       POSTGRES_USER: "$DB_USER"
       POSTGRES_DB: "$DB_NAME"
       POSTGRES_PORT: "$DB_PORT"
-#   dev-mode only
+#   dev-mode-only
 #    ports:
 #      - "127.0.0.1:5432:5432"
     volumes:
@@ -20,6 +20,7 @@ services:
     depends_on:
       - api
     image: redis:7.2.5
+#   dev-mode only
 #    ports:
 #      - "127.0.0.1:6379:6379"
 
@@ -28,7 +29,7 @@ services:
     depends_on:
       - db
     image: rshafikov/budget_bot_infra:latest
-#   dev-mode only
+#   dev-mode-only
 #    volumes:
 #       - "./:/app"
     env_file:
@@ -44,7 +45,7 @@ services:
 #      context: .
 #      target: dev
 #      dockerfile: Dockerfile
-#   dev-mode only
+#   dev-mode-only
 #    volumes:
 #       - "./:/app"
 #    ports:
@@ -58,12 +59,12 @@ services:
     depends_on:
       - redis
       - api
-    image: rshafikov/budget_bot:latest
-#    build:
-#      context: .
-#      target: dev
-#      dockerfile: Dockerfile
-#   dev-mode only
+#    image: rshafikov/budget_bot:latest
+    build:
+      context: .
+      target: prod
+      dockerfile: Dockerfile
+#   dev-mode-only
 #    volumes:
 #       - "./:/app"
     env_file:
